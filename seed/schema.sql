@@ -8,7 +8,7 @@ create table players
     name varchar(15) unique not null,
     email varchar(255) unique not null,
     password_hash varchar(255),
-    available boolian,
+    available boolean,
     goal varchar(255),
     score integer
 
