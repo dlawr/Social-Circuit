@@ -1,0 +1,20 @@
+{
+  "name": "social-circuit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dlawr/Social-Circuit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dlawr/Social-Circuit/issues"
+  },
+  "homepage": "https://github.com/dlawr/Social-Circuit#readme"
+}
