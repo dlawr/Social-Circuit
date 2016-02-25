@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/dlawr/Social-Circuit/issues"
   },
-  "homepage": "https://github.com/dlawr/Social-Circuit#readme"
+  "homepage": "https://github.com/dlawr/Social-Circuit#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "morgan": "^1.7.0",
+    "path": "^0.12.7"
+  }
 }
