@@ -9,7 +9,7 @@ app.get('/', function(req, res) {
   res.send('hit--------------/');
 });
 
-
+app.get('/:id')
 
 
 var port = 3000;
