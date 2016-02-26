@@ -4,11 +4,42 @@ var bcrypt = require('bcrypt');
 var salt = bcrypt.genSaltSync(10);
 var session = require('express-session');
 
-function checkExist(req, res, next) {
-  console.log('checkExist');
+function checkConnection(req, res, next) {
   // find user by email entered at log in
   pg.connect(connectionString, function(err, client, done) {
-    console.log('pg connect');
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      res.status(500).json({ success: false, data: err});
+    }
+
+    var query = client.query("select players.email from (\
+      select * from players\
+      inner join links on players.id = links.p1\
+    ) as first\
+    inner join players on players.id = first.p2\
+    where players.email like ($1);",
+      [req.params.id], function(err, result) {
+        done()
+        if(err) {
+          return console.error('error, running query', err);
+        }
+
+
+      if (result.rows.length === 0) {
+        res.isLinked = false;
+      } else {
+        res.isLinked = true;
+      }
+      next()
+    });
+  });
+}
+
+function checkExist(req, res, next) {
+  // find user by email entered at log in
+  pg.connect(connectionString, function(err, client, done) {
     // Handle connection errors
     if(err) {
       done();
@@ -19,12 +50,11 @@ function checkExist(req, res, next) {
     var query = client.query("SELECT * FROM players WHERE email LIKE ($1);",
       [req.params.id], function(err, result) {
         done()
-        console.log('query');
         if(err) {
           return console.error('error, running query', err);
         }
 
-        if (result.rows.length == 0) {
+        if (result.rows.length === 0) {
           res.check = false;
         } else {
           res.check = true;
@@ -103,3 +133,4 @@ function createUser(req, res, next) {
 module.exports.createUser = createUser;
 module.exports.loginUser = loginUser;
 module.exports.checkExist = checkExist;
+module.exports.checkConnection = checkConnection;

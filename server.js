@@ -50,8 +50,9 @@ app.post('/login', db.loginUser, function(req, res) {
   });
 });
 
-app.get('/:id', db.checkExist, function(req, res) {
+app.get('/:id', db.checkExist, db.checkConnection, function(req, res) {
   console.log('second callback');
+  console.log(res.isLinked,'linked');
   if (res.check) {
     if (!!(req.session.user)) {
       if(req.session.user.email === req.params.id) {
