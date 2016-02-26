@@ -4,6 +4,36 @@ var bcrypt = require('bcrypt');
 var salt = bcrypt.genSaltSync(10);
 var session = require('express-session');
 
+function checkExist(req, res, next) {
+  console.log('checkExist');
+  // find user by email entered at log in
+  pg.connect(connectionString, function(err, client, done) {
+    console.log('pg connect');
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      res.status(500).json({ success: false, data: err});
+    }
+
+    var query = client.query("SELECT * FROM players WHERE email LIKE ($1);",
+      [req.params.id], function(err, result) {
+        done()
+        console.log('query');
+        if(err) {
+          return console.error('error, running query', err);
+        }
+
+        if (result.rows.length == 0) {
+          res.check = false;
+        } else {
+          res.check = true;
+        }
+        next()
+    });
+  });
+}
+
 function loginUser(req, res, next) {
   var email = req.body.email;
   var password = req.body.password;
@@ -72,3 +102,4 @@ function createUser(req, res, next) {
 
 module.exports.createUser = createUser;
 module.exports.loginUser = loginUser;
+module.exports.checkExist = checkExist;

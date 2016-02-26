@@ -25,6 +25,7 @@ app.use(session({
   }),
   secret: 'sooosecrett', // something we maybe want to save with dotenv *hint hint*
   resave: false,
+  saveUninitialized: true,
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days
 }))
 
@@ -49,15 +50,20 @@ app.post('/login', db.loginUser, function(req, res) {
   });
 });
 
-app.get('/:id', function(req, res) {
-  if (!!(req.session.user)) {
-    if(req.session.user.email === req.params.id) {
-      res.send('this is your page');
+app.get('/:id', db.checkExist, function(req, res) {
+  console.log('second callback');
+  if (res.check) {
+    if (!!(req.session.user)) {
+      if(req.session.user.email === req.params.id) {
+        res.send('this is your page');
+      } else {
+        res.send(req.params.id);
+      }
     } else {
       res.send(req.params.id);
     }
   } else {
-    res.send(req.params.id);
+    res.send('no such user exists');
   }
 });
 
