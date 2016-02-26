@@ -32,16 +32,16 @@ app.get('/', function(req, res) {
 });
 
 app.post('/', db.createUser, function(req, res) {
-  res.send('hit post /new');
+  res.redirect(301,'/');
 });
 
 app.post('/login', db.loginUser, function(req, res) {
-  res.send('hit post /new');
+  res.redirect(301,'/' + res.rows.email);
 });
 
 
 app.get('/:id', function(req, res) {
-
+  res.send(req.params.id);
 });
 
 
