@@ -1,11 +1,10 @@
-drop table if exists player;
-drop table if exists links;
 drop table if exists posts;
+drop table if exists links;
+drop table if exists players;
 
 create table players
   (
     id serial primary key unique,
-    name varchar(15) unique not null,
     email varchar(255) unique not null,
     password_hash varchar(255),
     available boolean,

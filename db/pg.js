@@ -15,6 +15,7 @@ function createSecure(email, password, callback) {
 };
 
 function createUser(req, res, next) {
+  console.log(req.body);
   createSecure(req.body.email, req.body.password, saveUser);
 
   function saveUser(email, hash) {
@@ -27,7 +28,7 @@ function createUser(req, res, next) {
         return res.status(500).json({ success: false, data: err});
       }
 
-      var query = client.query("INSERT INTO users (email, password_hash) VALUES ($1, $2);",
+      var query = client.query("INSERT INTO players (email, password_hash) VALUES ($1, $2);",
         [email, hash], function(err, result) {
           done()
           if(err) {
