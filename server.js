@@ -10,6 +10,20 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+var session = require('express-session');
+var pgSession = require('connect-pg-simple')(session);
+
+app.use(session({
+  store: new pgSession({
+    pg : pg,
+    conString : connectionString,
+    tableName : 'session'
+  }),
+  secret: 'sooosecrett', // something we maybe want to save with dotenv *hint hint*
+  resave: false,
+  cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days
+}))
+
 app.get('/', function(req, res) {
   res.render('home.html.ejs');
 });
