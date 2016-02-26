@@ -8,10 +8,11 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var pgSession = require('connect-pg-simple')(session);
 var connectionString = "postgres://dan:wak24pie@localhost/social_circuit";
-
+var methodOverride = require('method-override');
 
 var app = express();
 
+app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -28,7 +29,8 @@ app.use(session({
 }))
 
 app.get('/', function(req, res) {
-  res.render('home.html.ejs');
+  console.log(req.session.user);
+  res.render('home.html.ejs', { user: req.session.user});
 });
 
 app.post('/', db.createUser, function(req, res) {
@@ -36,13 +38,35 @@ app.post('/', db.createUser, function(req, res) {
 });
 
 app.post('/login', db.loginUser, function(req, res) {
-  res.redirect(301,'/' + res.rows.email);
-});
+  req.session.user = res.rows
+  // when you redirect you must force a save due to asynchronisity
+  // https://github.com/expressjs/session/issues/167 **
+  // "modern web browsers ignore the body of the response and so start loading
+  // the destination page well before we finished sending the response to the client."
 
+  req.session.save(function() {
+    res.redirect(301,'/' + res.rows.email);
+  });
+});
 
 app.get('/:id', function(req, res) {
-  res.send(req.params.id);
+  if (!!(req.session.user)) {
+    if(req.session.user.email === req.params.id) {
+      res.send('this is your page');
+    } else {
+      res.send(req.params.id);
+    }
+  } else {
+    res.send(req.params.id);
+  }
 });
+
+app.delete('/logout', function(req, res) {
+  req.session.destroy(function(err) {
+    res.redirect('/')
+  });
+});
+
 
 
 var port = 3000;
