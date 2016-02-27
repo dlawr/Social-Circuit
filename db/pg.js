@@ -4,8 +4,49 @@ var bcrypt = require('bcrypt');
 var salt = bcrypt.genSaltSync(10);
 var session = require('express-session');
 
+function createConnection(req, res, next) {
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      res.status(500).json({ success: false, data: err});
+    }
+
+    var query = client.query("insert into links (p1, p2) values (\
+      (select id from players where email like ($1)),\
+      (select id from players where email like ($2)));",
+      [req.params.id, req.session.email], function(err, result) {
+        done()
+        if(err) {
+          return console.error('error, running query', err);
+        }
+
+        pg.connect(connectionString, function(err, client, done) {
+          // Handle connection errors
+          if(err) {
+            done();
+            console.log(err);
+            res.status(500).json({ success: false, data: err});
+          }
+
+          var query = client.query("insert into links (p1, p2) values (\
+            (select id from players where email like ($1)),\
+            (select id from players where email like ($2)));",
+          [req.session.email, req.params.id], function(err, result) {
+            done()
+            if(err) {
+              return console.error('error, running query', err);
+            }
+            next()
+          });
+        });
+
+    });
+  });
+}
+
 function checkConnection(req, res, next) {
-  // find user by email entered at log in
   pg.connect(connectionString, function(err, client, done) {
     // Handle connection errors
     if(err) {
@@ -38,7 +79,6 @@ function checkConnection(req, res, next) {
 }
 
 function checkExist(req, res, next) {
-  // find user by email entered at log in
   pg.connect(connectionString, function(err, client, done) {
     // Handle connection errors
     if(err) {
@@ -134,3 +174,4 @@ module.exports.createUser = createUser;
 module.exports.loginUser = loginUser;
 module.exports.checkExist = checkExist;
 module.exports.checkConnection = checkConnection;
+module.exports.createConnection = createConnection;
