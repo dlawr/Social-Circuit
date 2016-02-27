@@ -4,6 +4,70 @@ var bcrypt = require('bcrypt');
 var salt = bcrypt.genSaltSync(10);
 var session = require('express-session');
 
+function selectRandomUser() {
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      // return res.status(500).json({ success: false, data: err});
+    }
+
+    var query = client.query("select email from players;",
+      function(err, result) {
+        done()
+        if(err) {
+          return console.error('error, running query', err);
+        }
+        var selection = Math.floor(Math.random() * result.rows.length);
+        console.log(result.rows[selection].email);
+        return result.rows[selection].email;
+    });
+  });
+}
+
+function addRandomConnection(email) {
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      res.status(500).json({ success: false, data: err});
+    }
+
+    var query = client.query("insert into links (p1, p2) values (\
+      (select id from players where email like ($1)),\
+      (select id from players where email like ($2)));",
+      [req.params.id, req.session.email], function(err, result) {
+        done()
+        if(err) {
+          return console.error('error, running query', err);
+        }
+
+        pg.connect(connectionString, function(err, client, done) {
+          // Handle connection errors
+          if(err) {
+            done();
+            console.log(err);
+            res.status(500).json({ success: false, data: err});
+          }
+
+          var query = client.query("insert into links (p1, p2) values (\
+            (select id from players where email like ($1)),\
+            (select id from players where email like ($2)));",
+          [req.session.email, req.params.id], function(err, result) {
+            done()
+            if(err) {
+              return console.error('error, running query', err);
+            }
+            next()
+          });
+        });
+
+    });
+  });
+}
+
 function createConnection(req, res, next) {
   pg.connect(connectionString, function(err, client, done) {
     // Handle connection errors
@@ -54,20 +118,21 @@ function checkConnection(req, res, next) {
       console.log(err);
       res.status(500).json({ success: false, data: err});
     }
-
+    console.log(req.session, req.session.user.email, req.params.id,'before query');
     var query = client.query("select players.email from (\
       select * from players\
       inner join links on players.id = links.p1\
+      where players.email like ($1)\
     ) as first\
     inner join players on players.id = first.p2\
-    where players.email like ($1);",
-      [req.params.id], function(err, result) {
+    where players.email like ($2);",
+      [req.session.user.email, req.params.id], function(err, result) {
         done()
         if(err) {
           return console.error('error, running query', err);
         }
 
-
+      console.log(result.rows,'check connection');
       if (result.rows.length === 0) {
         res.isLinked = false;
       } else {
@@ -145,7 +210,6 @@ function createSecure(email, password, callback) {
 };
 
 function createUser(req, res, next) {
-  console.log(req.body);
   createSecure(req.body.email, req.body.password, saveUser);
 
   function saveUser(email, hash) {
@@ -164,6 +228,7 @@ function createUser(req, res, next) {
           if(err) {
             return console.error('error, running query', err);
           }
+          // addRandomConnection(req.body.email)
           next()
       });
     });
@@ -175,3 +240,4 @@ module.exports.loginUser = loginUser;
 module.exports.checkExist = checkExist;
 module.exports.checkConnection = checkConnection;
 module.exports.createConnection = createConnection;
+module.exports.selectRandomUser = selectRandomUser;
