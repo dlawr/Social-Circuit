@@ -30,6 +30,7 @@ app.use(session({
 }))
 
 app.get('/', function(req, res) {
+
   console.log(req.session.user);
   res.render('home.html.ejs', { user: req.session.user});
 });
@@ -58,6 +59,7 @@ app.get('/:id', db.checkExist, db.checkConnection, function(req, res) {
       if(req.session.user.email === req.params.id) {
         res.send('this is your page');
       } else {
+        res.render('userPage.html.ejs', {user: req.params.id});
         res.send(req.params.id);
       }
     } else {
@@ -66,6 +68,10 @@ app.get('/:id', db.checkExist, db.checkConnection, function(req, res) {
   } else {
     res.send('no such user exists');
   }
+});
+
+app.post('/:id/connect', db.createConnection, function(req, res) {
+  res.redirect(301, '/' + req.params.id);
 });
 
 app.delete('/logout', function(req, res) {
