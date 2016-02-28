@@ -52,7 +52,6 @@ app.post('/login', db.loginUser, function(req, res) {
 });
 
 app.get('/:id', db.checkExist, db.checkConnection, function(req, res) {
-  console.log('second callback');
   console.log(res.isLinked,'linked');
   if (res.check) {
     if (!!(req.session.user)) {
@@ -70,8 +69,8 @@ app.get('/:id', db.checkExist, db.checkConnection, function(req, res) {
   }
 });
 
-app.post('/:id/connect', db.createConnection, function(req, res) {
-  res.redirect(301, '/' + req.params.id);
+app.post('/connect', db.createConnection, function(req, res) {
+  res.redirect(301, '/' + req.body.id);
 });
 
 app.delete('/logout', function(req, res) {

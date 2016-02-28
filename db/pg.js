@@ -65,6 +65,8 @@ function selectRandomUser(id1) {
 
 
 function createConnection(req, res, next) {
+  console.log('createConnection start', req.body);
+  console.log('info',req.body.friend_id, req.session.user.email);
   pg.connect(connectionString, function(err, client, done) {
     // Handle connection errors
     if(err) {
@@ -76,7 +78,7 @@ function createConnection(req, res, next) {
     var query = client.query("insert into links (p1, p2) values (\
       (select id from players where email like ($1)),\
       (select id from players where email like ($2)));",
-      [req.params.id, req.session.email], function(err, result) {
+      [req.body.friend_id, req.session.user.email], function(err, result) {
         done()
         if(err) {
           return console.error('error, running query', err);
@@ -93,7 +95,7 @@ function createConnection(req, res, next) {
           var query = client.query("insert into links (p1, p2) values (\
             (select id from players where email like ($1)),\
             (select id from players where email like ($2)));",
-          [req.session.email, req.params.id], function(err, result) {
+          [req.session.user.email, req.body.friend_id], function(err, result) {
             done()
             if(err) {
               return console.error('error, running query', err);

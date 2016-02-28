@@ -5,12 +5,12 @@
   <title>user</title>
 </head>
 <body>
-  <div>
-  <form method="post" action="/"<%= user %>"/connect">
-    <button>connect</button>
-  </form>
-  </div>
 
+  <form class="" action="/connect" method="post">
+      <input type="hidden" name="members_id" value="req.session.user">
+      <input type="hidden" name="friend_id" value=<%=user%>>
+      <button type="submit">Link</button>
+  </form>
 
 </body>
 </html>
