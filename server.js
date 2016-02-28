@@ -60,7 +60,7 @@ app.get('/:id', db.checkExist, db.checkConnection, function(req, res) {
         res.send('this is your page');
       } else {
         res.render('userPage.html.ejs', {user: req.params.id});
-        res.send(req.params.id);
+        // res.send(req.params.id);
       }
     } else {
       res.send(req.params.id);
