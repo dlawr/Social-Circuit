@@ -31,7 +31,7 @@ app.use(session({
 
 app.get('/', function(req, res) {
 
-  console.log(req.session.user);
+  // console.log(req.session.user);
   res.render('home.html.ejs', { user: req.session.user});
 });
 
