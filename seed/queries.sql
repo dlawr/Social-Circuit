@@ -30,3 +30,7 @@ insert into links (p1, p2) values (
   ) as first
   inner join players on players.id = first.p2
   where players.email like 'b';
+
+delete from links where
+p1 = (select id from players where email like 'a')
+and p2 = (select id from players where email like 'b');
