@@ -61,11 +61,17 @@ app.get('/:id', db.checkExist, db.checkConnection, db.firstDegreeConnections, fu
     if (res.check) {
       if (!!(req.session.user)) {
         if(req.session.user.email === req.params.id) {
-          res.send('this is your page');
+          res.render('userPage.html.ejs', {
+            linkStuff: res.linkStuff,
+            user: req.params.id,
+            firstDegreeConnections: res.firstDegreeConnections
+          });
+          // res.send('this is your page');
         } else {
           res.render('userPage.html.ejs', {
             linkStuff: res.linkStuff,
-            user: req.params.id
+            user: req.params.id,
+            firstDegreeConnections: res.firstDegreeConnections
           });
           // res.send(req.params.id);
         }

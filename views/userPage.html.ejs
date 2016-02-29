@@ -11,5 +11,11 @@
       <button type="submit"><%= linkStuff.label %></button>
   </form>
 
+  <% if (true) { %>
+    <% firstDegreeConnections.forEach(function(lnk) { %>
+      <div><a href="/"<%= lnk.email %>><%= lnk.email %></a></div>
+      <% }) %>
+  <% } %>
+
 </body>
 </html>

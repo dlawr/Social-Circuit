@@ -16,7 +16,9 @@ function firstDegreeConnections(req, res, next) {
         return res.status(500).json({ success: false, data: err});
       }
 
-      var query = client.query("select p2 from links where p1 = ($1);",
+      var query = client.query("select players.email from links\
+       inner join players on links.p2 = players.id\
+       where links.p1 = ($1);",
       [req.session.user.id], function(err, result) {
         done()
         if(err) {
