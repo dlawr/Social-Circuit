@@ -11,7 +11,7 @@
       <button type="submit"><%= linkStuff.label %></button>
   </form>
 
-  <% if (true) { %>
+  <% if (myPage) { %>
     <% firstDegreeConnections.forEach(function(lnk) { %>
       <% var ihaven_oIdea_whatscopethisisin = '/' + lnk.email; %>
       <div><a href=<%= ihaven_oIdea_whatscopethisisin %>><%= lnk.email %></a></div>

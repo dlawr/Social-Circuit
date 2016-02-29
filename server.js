@@ -64,14 +64,16 @@ app.get('/:id', db.checkExist, db.checkConnection, db.firstDegreeConnections, fu
           res.render('userPage.html.ejs', {
             linkStuff: res.linkStuff,
             user: req.params.id,
-            firstDegreeConnections: res.firstDegreeConnections
+            firstDegreeConnections: res.firstDegreeConnections,
+            myPage: true
           });
           // res.send('this is your page');
         } else {
           res.render('userPage.html.ejs', {
             linkStuff: res.linkStuff,
             user: req.params.id,
-            firstDegreeConnections: res.firstDegreeConnections
+            firstDegreeConnections: res.firstDegreeConnections,
+            myPage: false
           });
           // res.send(req.params.id);
         }
