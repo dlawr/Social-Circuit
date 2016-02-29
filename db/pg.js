@@ -282,3 +282,4 @@ module.exports.checkExist = checkExist;
 module.exports.checkConnection = checkConnection;
 module.exports.createConnection = createConnection;
 module.exports.selectRandomUser = selectRandomUser;
+module.exports.deleteConnection = deleteConnection;
