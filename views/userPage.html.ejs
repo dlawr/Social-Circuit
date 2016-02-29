@@ -6,10 +6,9 @@
 </head>
 <body>
 
-  <form class="" action="/connect" method="post">
-      <input type="hidden" name="members_id" value="req.session.user">
-      <input type="hidden" name="friend_id" value=<%=user%>>
-      <button type="submit">Link</button>
+  <form class="" action=<%= linkStuff.nextStep %> method="post">
+      <input type="hidden" name="friend_id" value=<%= user %>>
+      <button type="submit"><%= linkStuff.label %></button>
   </form>
 
 </body>

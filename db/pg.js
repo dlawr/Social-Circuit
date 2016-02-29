@@ -5,7 +5,7 @@ var salt = bcrypt.genSaltSync(10);
 var session = require('express-session');
 
 function deleteConnection(req, res, next) {
-  console.log('createConnection start', req.body);
+  console.log('deleteConnection start-----------------------------');
   console.log('info',req.body.friend_id, req.session.user.email);
   pg.connect(connectionString, function(err, client, done) {
     // Handle connection errors
@@ -174,9 +174,17 @@ function checkConnection(req, res, next) {
 
       console.log(result.rows,'check connection');
       if (result.rows.length === 0) {
-        res.isLinked = false;
+        res.linkStuff = {
+          isLinked: false,
+          nextStep: 'connect',
+          label: 'link'
+        };
       } else {
-        res.isLinked = true;
+        res.linkStuff = {
+          isLinked: true,
+          nextStep: '/connect?_method=DELETE',
+          label: 'unlink'
+        };
       }
       next()
     });

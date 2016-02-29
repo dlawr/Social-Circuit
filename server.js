@@ -52,13 +52,16 @@ app.post('/login', db.loginUser, function(req, res) {
 });
 
 app.get('/:id', db.checkExist, db.checkConnection, function(req, res) {
-  console.log(res.isLinked,'linked');
+  console.log(res.linkStuff.isLinked,'linked');
   if (res.check) {
     if (!!(req.session.user)) {
       if(req.session.user.email === req.params.id) {
         res.send('this is your page');
       } else {
-        res.render('userPage.html.ejs', {user: req.params.id});
+        res.render('userPage.html.ejs', {
+          linkStuff: res.linkStuff,
+          user: req.params.id
+        });
         // res.send(req.params.id);
       }
     } else {
@@ -70,7 +73,11 @@ app.get('/:id', db.checkExist, db.checkConnection, function(req, res) {
 });
 
 app.post('/connect', db.createConnection, function(req, res) {
-  res.redirect(301, '/' + req.body.id);
+  res.redirect(301, '/');
+});
+
+app.delete('/connect', db.deleteConnection, function(req, res) {
+  res.redirect(301, '/');
 });
 
 app.delete('/logout', function(req, res) {
