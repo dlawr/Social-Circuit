@@ -6,10 +6,12 @@
 </head>
 <body>
 
+  <% if (!myPage) { %>
   <form class="" action=<%= linkStuff.nextStep %> method="post">
       <input type="hidden" name="friend_id" value=<%= user %>>
       <button type="submit"><%= linkStuff.label %></button>
   </form>
+  <% } %>
 
   <% if (myPage) { %>
     <% firstDegreeConnections.forEach(function(lnk) { %>
