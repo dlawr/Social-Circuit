@@ -4,6 +4,49 @@ var bcrypt = require('bcrypt');
 var salt = bcrypt.genSaltSync(10);
 var session = require('express-session');
 
+function deleteConnection(req, res, next) {
+  console.log('createConnection start', req.body);
+  console.log('info',req.body.friend_id, req.session.user.email);
+  pg.connect(connectionString, function(err, client, done) {
+    // Handle connection errors
+    if(err) {
+      done();
+      console.log(err);
+      res.status(500).json({ success: false, data: err});
+    }
+    var query = client.query("delete from links where\
+      p1 = (select id from players where email like ($1))\
+      and p2 = (select id from players where email like ($2));",
+      [req.body.friend_id, req.session.user.email], function(err, result) {
+        done()
+        if(err) {
+          return console.error('error, running query', err);
+        }
+
+        pg.connect(connectionString, function(err, client, done) {
+          // Handle connection errors
+          if(err) {
+            done();
+            console.log(err);
+            res.status(500).json({ success: false, data: err});
+          }
+
+          var query = client.query("delete from links where\
+            p1 = (select id from players where email like ($1))\
+            and p2 = (select id from players where email like ($2));",
+          [req.session.user.email, req.body.friend_id], function(err, result) {
+            done()
+            if(err) {
+              return console.error('error, running query', err);
+            }
+            next()
+          });
+        });
+
+    });
+  });
+}
+
 function selectRandomUser(id1) {
   console.log('select random user beginning');
   pg.connect(connectionString, function(err, client, done) {
@@ -62,7 +105,6 @@ function selectRandomUser(id1) {
     });
   });
 }
-
 
 function createConnection(req, res, next) {
   console.log('createConnection start', req.body);
