@@ -51,12 +51,12 @@ app.post('/login', db.loginUser, function(req, res) {
   });
 });
 
-app.get('/:id', db.checkExist, db.checkConnection, function(req, res) {
+app.get('/:id', db.checkExist, db.checkConnection, db.firstDegreeConnections, function(req, res) {
   if (!(req.session)) {
     console.log('--------------------------------------not session');
     res.send('you must be logged in to view this page');
   } else {
-
+    console.log('firstDegreeConnections', res.firstDegreeConnections);
     console.log(res.linkStuff.isLinked,'linked');
     if (res.check) {
       if (!!(req.session.user)) {

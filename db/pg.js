@@ -4,6 +4,31 @@ var bcrypt = require('bcrypt');
 var salt = bcrypt.genSaltSync(10);
 var session = require('express-session');
 
+function firstDegreeConnections(req, res, next) {
+  if(!req.session.user) {
+    next();
+  } else {
+    pg.connect(connectionString, function(err, client, done) {
+      // Handle connection errors
+      if(err) {
+        done();
+        console.log(err);
+        return res.status(500).json({ success: false, data: err});
+      }
+
+      var query = client.query("select p2 from links where p1 = ($1);",
+      [req.session.user.id], function(err, result) {
+        done()
+        if(err) {
+          return console.error('error, running query', err);
+        }
+        res.firstDegreeConnections = result.rows;
+        next();
+      });
+    });
+  }
+}
+
 function deleteConnection(req, res, next) {
   console.log('deleteConnection start-----------------------------');
   console.log('info',req.body.friend_id, req.session.user.email);
@@ -294,3 +319,4 @@ module.exports.checkConnection = checkConnection;
 module.exports.createConnection = createConnection;
 module.exports.selectRandomUser = selectRandomUser;
 module.exports.deleteConnection = deleteConnection;
+module.exports.firstDegreeConnections = firstDegreeConnections;
