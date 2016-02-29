@@ -7,7 +7,11 @@ var pg = require('pg');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var pgSession = require('connect-pg-simple')(session);
-var connectionString = "postgres://dan:wak24pie@localhost/social_circuit";
+if (process.env.ENVIRONMENT === 'production') {
+  var connectionString = process.env.DATABASE_URL;
+} else {
+  var connectionString = "postgres://dan:wak24pie@localhost/social_circuit";
+}
 var methodOverride = require('method-override');
 
 var app = express();
