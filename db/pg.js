@@ -1,5 +1,9 @@
 var pg = require('pg');
-var connectionString = "postgres://dan:wak24pie@localhost/social_circuit";
+if (process.env.ENVIRONMENT === 'production') {
+  var connectionString = DATABASE_URL;
+} else {
+  var connectionString = "postgres://dan:wak24pie@localhost/social_circuit";
+}
 var bcrypt = require('bcrypt');
 var salt = bcrypt.genSaltSync(10);
 var session = require('express-session');
