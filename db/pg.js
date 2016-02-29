@@ -1,6 +1,6 @@
 var pg = require('pg');
 if (process.env.ENVIRONMENT === 'production') {
-  var connectionString = DATABASE_URL;
+  var connectionString = process.env.DATABASE_URL;
 } else {
   var connectionString = "postgres://dan:wak24pie@localhost/social_circuit";
 }
