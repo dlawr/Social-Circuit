@@ -13,7 +13,8 @@
 
   <% if (true) { %>
     <% firstDegreeConnections.forEach(function(lnk) { %>
-      <div><a href="/"<%= lnk.email %>><%= lnk.email %></a></div>
+      <% var ihaven_oIdea_whatscopethisisin = '/' + lnk.email; %>
+      <div><a href=<%= ihaven_oIdea_whatscopethisisin %>><%= lnk.email %></a></div>
       <% }) %>
   <% } %>
 
