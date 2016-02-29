@@ -151,6 +151,9 @@ function createConnection(req, res, next) {
 }
 
 function checkConnection(req, res, next) {
+  if(!req.session.user) {
+    next();
+  }
   pg.connect(connectionString, function(err, client, done) {
     // Handle connection errors
     if(err) {

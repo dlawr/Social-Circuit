@@ -52,23 +52,29 @@ app.post('/login', db.loginUser, function(req, res) {
 });
 
 app.get('/:id', db.checkExist, db.checkConnection, function(req, res) {
-  console.log(res.linkStuff.isLinked,'linked');
-  if (res.check) {
-    if (!!(req.session.user)) {
-      if(req.session.user.email === req.params.id) {
-        res.send('this is your page');
+  if (!(req.session)) {
+    console.log('--------------------------------------not session');
+    res.send('you must be logged in to view this page');
+  } else {
+
+    console.log(res.linkStuff.isLinked,'linked');
+    if (res.check) {
+      if (!!(req.session.user)) {
+        if(req.session.user.email === req.params.id) {
+          res.send('this is your page');
+        } else {
+          res.render('userPage.html.ejs', {
+            linkStuff: res.linkStuff,
+            user: req.params.id
+          });
+          // res.send(req.params.id);
+        }
       } else {
-        res.render('userPage.html.ejs', {
-          linkStuff: res.linkStuff,
-          user: req.params.id
-        });
-        // res.send(req.params.id);
+        res.send(req.params.id);
       }
     } else {
-      res.send(req.params.id);
+      res.send('no such user exists');
     }
-  } else {
-    res.send('no such user exists');
   }
 });
 
